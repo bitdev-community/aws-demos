@@ -1,0 +1,91 @@
+---
+description: A very basic AWS Lambda
+labels: ['serverless', 'aws', 'lambda', 'demo', 'deployer', 'app']
+---
+
+A basic component that publishes a function to AWS Lambda.
+
+## Basic usage
+
+To get this Lambda function running in your workspace, run the following:
+
+```sh
+bit fork aws-demos.lambda/aws/lambda/simple-lambda
+```
+
+Configure the new Lambda component on your [workspace.json](https://bit.dev/teambit/workspace/content/workspace-configuration/~compositions) by adding your component to the root level:
+
+```json
+"myorg.some-scope/aws/lambda/simple-lambda": {}
+```
+
+Also add the dependency in the same file:
+
+```json
+"teambit.cloud-providers/aws/lambda": {}
+```
+
+## Running locally
+
+Run the Lambda using the app name set on `hello.world.lambda.ts`:
+
+```
+bit run hello-lambda-app
+```
+
+You should see a message in the console like the following:
+
+```sh
+hello-lambda-app app is running on http://localhost:3000
+```
+
+To test your lambda function, you can make a POST request to the URL where it is running.
+To test an event, pass it to the body of the request:
+
+```sh
+curl --location --request POST 'http://localhost:3000' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "event":{
+        "firstName": "Bit",
+        "lastName": "Component"
+    }
+}'
+```
+
+Response
+
+```json
+{
+  "data": {
+    "statusCode": 200,
+    "headers": { "Content-Type": "application/json" },
+    "body": "{\"greetings\":\"Hello Bit Component!. It is the year 2022\"}"
+  }
+}
+```
+
+## Deploy the Lambda function to AWS
+
+Make sure to configure `deployOptions` within your Lambda as shown below. It is recommended to store your credentials in environment variables.
+
+```ts
+ deployOptions: {
+    clientConfig: {
+      /* the aws hosting region */
+      region: 'us-east-1',
+      /* your aws credentials */
+      credentials: {
+        secretAccessKey: process.env.AWS_SECRET_KEY,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      },
+    },
+```
+
+Once done, your component would be deployed on your next tag:
+
+```
+bit tag aws/lambda/hello-world
+```
+
+Visit your AWS console and you will see the Lambda function deployed.
