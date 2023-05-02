@@ -1,13 +1,11 @@
 import moment from "moment";
 
 export async function handler(
-  event: { firstName: string; lastName: string },
+  event: {},
   context?: undefined
 ) {
   const data = {
-    greeting: `Hello ${event.firstName} ${
-      event.lastName
-    }!. It is the year ${moment().format("YYYY")}`,
+    greeting: `Hello!. It is the year ${moment().format("YYYY")}`,
   };
   return {
     statusCode: 200,

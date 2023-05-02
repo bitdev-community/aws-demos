@@ -17,7 +17,7 @@ export const HelloLambdaApp: LambdaApp = {
       },
     },
     /* the lambda's name (for aws). Using an already used name will update the code. */
-    functionName: `test_lambda_${Date.now()}`,
+    functionName: `test_lambda_bit`,
     /* the runtime execution environment */
     runtime: "nodejs14.x",
     /* a description for your lambda (will be displayed on the aws console) */
@@ -32,7 +32,7 @@ export const HelloLambdaApp: LambdaApp = {
       invokeMode: 'BUFFERED',
       cors: {
         allowOrigins: ['*'],
-        allowMethods: ['POST']
+        allowMethods: ['GET']
       }
     },
   },

@@ -5,20 +5,20 @@ import { createWriteStream } from 'fs';
 import { Application, AppContext, AppBuildResult, AppBuildContext, AppDeployContext } from '@teambit/application';
 import { Port } from '@teambit/toolbox.network.get-port';
 import { watch } from 'lambda-local';
-import { LambdaDeployOptions, CreateFunctionCommandOptions, CreateFunctionUrlConfigCommandOptions, LambdaUrlOptions } from './lambda.options';
+import { LambdaDeployOptions, CreateFunctionCommandOptions, CreateFunctionUrlConfigCommandOptions as FunctionUrlConfigCommandOptions, LambdaUrlOptions } from './lambda.options';
 import {
   LambdaClient,
+  AddPermissionCommand,
   CreateFunctionCommand,
   CreateFunctionUrlConfigCommand,
   UpdateFunctionUrlConfigCommand,
+  UpdateFunctionUrlConfigCommandInput,
   UpdateFunctionCodeCommandInput,
   GetFunctionCommand,
   GetFunctionCommandOutput,
   UpdateFunctionCodeCommand,
 } from '@aws-sdk/client-lambda';
-
 import { webpack } from 'webpack';
-import { UpdateFunctionUrlConfigCommandInput } from '@aws-sdk/client-lambda';
 
 export class LambdaApp implements Application {
   private lambdaClient: LambdaClient;
@@ -138,23 +138,38 @@ export class LambdaApp implements Application {
     };
     const lambdaFunction = new CreateFunctionCommand(basicParams);
     await this.lambdaClient.send(lambdaFunction);
-    if (urlOptions) {
-      const urlParams: CreateFunctionUrlConfigCommandOptions = {
+    if (urlOptions)
+      await this.createFunctionUrlConfig(urlOptions);
+  }
+  private mapFunctionUrlConfig(urlOptions: LambdaUrlOptions) {
+    return {
+      FunctionName: this.getFunctionName(),
+      Qualifier: urlOptions.qualifier,
+      AuthType: urlOptions.authType,
+      Cors: {
+        AllowCredentials: urlOptions.cors?.allowCredentials,
+        AllowHeaders: urlOptions.cors?.allowHeaders,
+        AllowMethods: urlOptions.cors?.allowMethods,
+        AllowOrigins: urlOptions.cors?.allowOrigins,
+        ExposeHeaders: urlOptions.cors?.exposeHeaders,
+        MaxAge: urlOptions.cors?.maxAge,
+      },
+      InvokeMode: urlOptions.invokeMode,
+    };
+  }
+  private async createFunctionUrlConfig(urlOptions: LambdaUrlOptions) {
+    const urlParams: FunctionUrlConfigCommandOptions = this.mapFunctionUrlConfig(urlOptions);
+    const lambdaUrlConfiguration = new CreateFunctionUrlConfigCommand(urlParams);
+    await this.lambdaClient.send(lambdaUrlConfiguration);
+    if (urlOptions.authType === 'NONE') {
+      const permissionParams = {
         FunctionName: this.getFunctionName(),
-        Qualifier: urlOptions.qualifier,
-        AuthType: urlOptions.authType,
-        Cors: {
-          AllowCredentials: urlOptions.cors?.allowCredentials,
-          AllowHeaders: urlOptions.cors?.allowHeaders,
-          AllowMethods: urlOptions.cors?.allowMethods,
-          AllowOrigins: urlOptions.cors?.allowOrigins,
-          ExposeHeaders: urlOptions.cors?.exposeHeaders,
-          MaxAge: urlOptions.cors?.maxAge,
-        },
-        InvokeMode: urlOptions.invokeMode,
+        StatementId: "FunctionURLAllowPublicAccess",
+        Action: "lambda:InvokeFunctionUrl",
+        Principal: "*",
+        FunctionUrlAuthType: "NONE"
       };
-      const lambdaUrlConfiguration = new CreateFunctionUrlConfigCommand(urlParams);
-      await this.lambdaClient.send(lambdaUrlConfiguration);
+      await this.lambdaClient.send(new AddPermissionCommand(permissionParams));
     }
   }
 
@@ -165,23 +180,13 @@ export class LambdaApp implements Application {
     };
     const lambdaFunction = new UpdateFunctionCodeCommand(basicParams);
     await this.lambdaClient.send(lambdaFunction);
-    if (urlOptions) {
-      const urlParams: UpdateFunctionUrlConfigCommandInput = {
-        FunctionName: this.getFunctionName(),
-        Qualifier: urlOptions.qualifier,
-        AuthType: urlOptions.authType,
-        Cors: {
-          AllowCredentials: urlOptions.cors?.allowCredentials,
-          AllowHeaders: urlOptions.cors?.allowHeaders,
-          AllowMethods: urlOptions.cors?.allowMethods,
-          AllowOrigins: urlOptions.cors?.allowOrigins,
-          ExposeHeaders: urlOptions.cors?.exposeHeaders,
-          MaxAge: urlOptions.cors?.maxAge,
-        },
-        InvokeMode: urlOptions.invokeMode,
-      };
-      const lambdaUrlConfiguration = new UpdateFunctionUrlConfigCommand(urlParams);
-      await this.lambdaClient.send(lambdaUrlConfiguration);
-    }
+    if (urlOptions)
+      await this.updateFunctionUrlConfig(urlOptions);
+  }
+
+  private async updateFunctionUrlConfig(urlOptions: LambdaUrlOptions) {
+    const urlParams: UpdateFunctionUrlConfigCommandInput = this.mapFunctionUrlConfig(urlOptions);
+    const lambdaUrlConfiguration = new UpdateFunctionUrlConfigCommand(urlParams);
+    await this.lambdaClient.send(lambdaUrlConfiguration);
   }
 }
