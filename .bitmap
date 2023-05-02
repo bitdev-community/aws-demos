@@ -11,13 +11,13 @@
 {
     "aws/lambda": {
         "scope": "teambit.cloud-providers",
-        "version": "0.0.14",
+        "version": "0.0.15",
         "mainFile": "index.ts",
         "rootDir": "cloud-providers/aws/lambda"
     },
     "simple-lambda": {
         "scope": "",
-        "version": "0.0.12",
+        "version": "0.0.14",
         "mainFile": "index.ts",
         "rootDir": "lambda/simple-lambda"
     },

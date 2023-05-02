@@ -4,7 +4,7 @@ export const HelloLambdaApp: LambdaApp = {
   /* the app's name (for Bit) */
   name: "hello-lambda-app",
   /* an entry point for the app's build */
-  entry: require.resolve("./hello-root"),
+  entry: require.resolve("./hello-world-root"),
   /* your aws host config and credentials */
   deployOptions: {
     clientConfig: {
@@ -23,7 +23,7 @@ export const HelloLambdaApp: LambdaApp = {
     /* a description for your lambda (will be displayed on the aws console) */
     description: "Deployed from Bit Component",
     /* the Amazon Resource Name (ARN) of the function's execution role. */
-    role: process.env.AWS_ROLE,
+    roleArn: process.env.AWS_ROLE,
     /* the name of the method within your code that Lambda calls to execute your function */
     handlerName: "handler",
     /* lambda endpoint url configurations.  */

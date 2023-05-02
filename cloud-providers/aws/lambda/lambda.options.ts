@@ -5,7 +5,7 @@ export type LambdaDeployOptions = {
   functionName: string;
   runtime: Runtime;
   description?: string;
-  role?: string;
+  roleArn?: string;
   handlerName: string;
   urlOptions?: LambdaUrlOptions
 };

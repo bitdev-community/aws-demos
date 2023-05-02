@@ -133,14 +133,14 @@ export class LambdaApp implements Application {
   }
 
   private async createNewFunction(zipFile: Buffer) {
-    const { runtime, handlerName, role, description, urlOptions } = this.options;
+    const { runtime, handlerName, roleArn, description, urlOptions } = this.options;
     const basicParams: CreateFunctionCommandInput = {
       Code: {
         ZipFile: zipFile,
       },
       FunctionName: this.getFunctionName(),
       Handler: `${parse(this.lambdaFileName).name}.${handlerName}`,
-      Role: role as string,
+      Role: roleArn as string,
       Runtime: runtime,
       Description: description,
     };

@@ -1,1 +1,1 @@
-export { handler } from "./hello-root";
+export { handler } from "./hello-world-root";
