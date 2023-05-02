@@ -20,6 +20,8 @@ import { watch } from 'lambda-local';
 import { join, parse } from 'path';
 import { webpack } from 'webpack';
 import { LambdaDeployOptions, LambdaUrlOptions } from './lambda.options';
+import { IAMClient, CreateRoleCommand, AttachRolePolicyCommand, Role } from '@aws-sdk/client-iam';
+
 
 export class LambdaApp implements Application {
   private lambdaClient: LambdaClient;
@@ -132,15 +134,58 @@ export class LambdaApp implements Application {
       await this.createFunctionUrlConfig(urlOptions);
   }
 
+  private isRole(role: Role | undefined) {
+    return !!role && !!role.Arn;
+  }
+  private sleep(ms: number): Promise<void> {
+    return new Promise(function (resolve) {
+      setTimeout(resolve, ms);
+    });
+  }
+
+  private async createLambdaExecutionRole() {
+    /* Use Lambda Deploy Config's credentials */
+    const iamClient = new IAMClient({ region: this.options.clientConfig.region, credentials: this.options.clientConfig.credentials });
+    const roleParams = {
+      RoleName: `LambdaExecutionRole-${Date.now()}`,
+      AssumeRolePolicyDocument: JSON.stringify({
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Effect: 'Allow',
+            Principal: { Service: 'lambda.amazonaws.com' },
+            Action: 'sts:AssumeRole',
+          },
+        ],
+      }),
+    };
+    const response = await iamClient.send(new CreateRoleCommand(roleParams));
+
+    if (this.isRole(response.Role)) {
+      const roleArn = response?.Role?.Arn;
+      console.log(`Created IAM role: ${roleArn}`);
+      await iamClient.send(new AttachRolePolicyCommand({ RoleName: roleParams.RoleName, PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole' }));
+      console.log('Attached AWSLambdaBasicExecutionRole policy to the IAM role');
+      return roleArn;
+    } else {
+      throw new Error('Error creating the role: Role or Arn is missing in the response');
+    }
+  }
+
   private async createNewFunction(zipFile: Buffer) {
     const { runtime, handlerName, roleArn, description, urlOptions } = this.options;
+    const role = roleArn ?? await this.createLambdaExecutionRole();
+    if (!roleArn) {
+      /* Add a delay for the IAM role to propegate */
+      await this.sleep(10000);
+    }
     const basicParams: CreateFunctionCommandInput = {
       Code: {
         ZipFile: zipFile,
       },
       FunctionName: this.getFunctionName(),
       Handler: `${parse(this.lambdaFileName).name}.${handlerName}`,
-      Role: roleArn as string,
+      Role: role,
       Runtime: runtime,
       Description: description,
     };
