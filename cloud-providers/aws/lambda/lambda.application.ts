@@ -163,12 +163,8 @@ export class LambdaApp implements Application {
 
     if (this.isRole(response.Role)) {
       const roleArn = response?.Role?.Arn;
-      console.log(`Created IAM role: ${roleArn}`);
       await iamClient.send(new AttachRolePolicyCommand({ RoleName: roleParams.RoleName, PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole' }));
-      console.log('Attached AWSLambdaBasicExecutionRole policy to the IAM role');
       return roleArn;
-    } else {
-      throw new Error('Error creating the role: Role or Arn is missing in the response');
     }
   }
 
