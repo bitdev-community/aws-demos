@@ -26,6 +26,15 @@ export const HelloLambdaApp: LambdaApp = {
     role: process.env.AWS_ROLE,
     /* the name of the method within your code that Lambda calls to execute your function */
     handlerName: "handler",
+    /* lambda endpoint url configurations.  */
+    urlOptions: {
+      authType: 'NONE',
+      invokeMode: 'BUFFERED',
+      cors: {
+        allowOrigins: ['*'],
+        allowMethods: ['POST']
+      }
+    },
   },
   /* the port range for running the app (lambda) in development (bit run) */
   portRange: [3000, 5000],

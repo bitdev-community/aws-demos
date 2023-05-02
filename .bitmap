@@ -11,38 +11,15 @@
 {
     "aws/lambda": {
         "scope": "teambit.cloud-providers",
-        "version": "0.0.8",
+        "version": "0.0.9",
         "mainFile": "index.ts",
         "rootDir": "cloud-providers/aws/lambda"
     },
     "simple-lambda": {
         "scope": "",
-        "version": "",
+        "version": "0.0.2",
         "mainFile": "index.ts",
-        "rootDir": "lambda/simple-lambda",
-        "config": {
-            "teambit.component/deprecation": {
-                "deprecate": true,
-                "newId": {
-                    "name": "deployments/aws/lambda-function",
-                    "scope": "learnbit.apps"
-                }
-            },
-            "teambit.component/dev-files": {},
-            "teambit.compositions/compositions": {},
-            "teambit.docs/docs": {},
-            "teambit.envs/envs": {},
-            "teambit.dependencies/dependency-resolver": {},
-            "teambit.pipelines/builder": {},
-            "teambit.compilation/compiler": {},
-            "teambit.component/forking": {
-                "forkedFrom": {
-                    "scope": "learnbit.apps",
-                    "name": "aws/lambda/hello-world-lambda",
-                    "version": "0.0.10"
-                }
-            }
-        }
+        "rootDir": "lambda/simple-lambda"
     },
     "$schema-version": "15.0.0"
 }

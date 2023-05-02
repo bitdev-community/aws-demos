@@ -5,10 +5,12 @@ import { createWriteStream } from 'fs';
 import { Application, AppContext, AppBuildResult, AppBuildContext, AppDeployContext } from '@teambit/application';
 import { Port } from '@teambit/toolbox.network.get-port';
 import { watch } from 'lambda-local';
-import { LambdaDeployOptions, CreateFunctionCommandOptions } from './lambda.options';
+import { LambdaDeployOptions, CreateFunctionCommandOptions, CreateFunctionUrlConfigCommandOptions, LambdaUrlOptions } from './lambda.options';
 import {
   LambdaClient,
   CreateFunctionCommand,
+  CreateFunctionUrlConfigCommand,
+  UpdateFunctionUrlConfigCommand,
   UpdateFunctionCodeCommandInput,
   GetFunctionCommand,
   GetFunctionCommandOutput,
@@ -16,6 +18,7 @@ import {
 } from '@aws-sdk/client-lambda';
 
 import { webpack } from 'webpack';
+import { UpdateFunctionUrlConfigCommandInput } from '@aws-sdk/client-lambda';
 
 export class LambdaApp implements Application {
   private lambdaClient: LambdaClient;
@@ -113,7 +116,7 @@ export class LambdaApp implements Application {
     const pathFolder = join(componentFolder, this.zipLocation);
     const zippedFileBuffer = readFileSync(pathFolder);
     const doesLambdaExistsInAWS = await this.checkLambdaExistsOnAWS(this.getFunctionName());
-    if (doesLambdaExistsInAWS) return this.updateExistingLambda(zippedFileBuffer);
+    if (doesLambdaExistsInAWS) return this.updateExistingLambda(zippedFileBuffer, this.options.urlOptions);
     return this.createNewLambda(zippedFileBuffer);
   }
 
@@ -122,27 +125,63 @@ export class LambdaApp implements Application {
   }
 
   private async createNewLambda(zipFile: Buffer) {
-    const { runtime, handlerName, role, description } = this.options;
-    const params: CreateFunctionCommandOptions = {
+    const { runtime, handlerName, role, description, urlOptions } = this.options;
+    const basicParams: CreateFunctionCommandOptions = {
       Code: {
         ZipFile: zipFile,
       },
       FunctionName: this.getFunctionName(),
       Handler: `${parse(this.lambdaFileName).name}.${handlerName}`,
-      Role: role,
+      Role: role as string,
       Runtime: runtime,
       Description: description,
     };
-    const lambdaFunction = new CreateFunctionCommand(params);
+    const lambdaFunction = new CreateFunctionCommand(basicParams);
     await this.lambdaClient.send(lambdaFunction);
+    if (urlOptions) {
+      const urlParams: CreateFunctionUrlConfigCommandOptions = {
+        FunctionName: this.getFunctionName(),
+        Qualifier: urlOptions.qualifier,
+        AuthType: urlOptions.authType,
+        Cors: {
+          AllowCredentials: urlOptions.cors?.allowCredentials,
+          AllowHeaders: urlOptions.cors?.allowHeaders,
+          AllowMethods: urlOptions.cors?.allowMethods,
+          AllowOrigins: urlOptions.cors?.allowOrigins,
+          ExposeHeaders: urlOptions.cors?.exposeHeaders,
+          MaxAge: urlOptions.cors?.maxAge,
+        },
+        InvokeMode: urlOptions.invokeMode,
+      };
+      const lambdaUrlConfiguration = new CreateFunctionUrlConfigCommand(urlParams);
+      await this.lambdaClient.send(lambdaUrlConfiguration);
+    }
   }
 
-  private async updateExistingLambda(zipFile: Buffer) {
-    const params: UpdateFunctionCodeCommandInput = {
+  private async updateExistingLambda(zipFile: Buffer, urlOptions?: LambdaUrlOptions) {
+    const basicParams: UpdateFunctionCodeCommandInput = {
       ZipFile: zipFile,
       FunctionName: this.getFunctionName(),
     };
-    const lambdaFunction = new UpdateFunctionCodeCommand(params);
+    const lambdaFunction = new UpdateFunctionCodeCommand(basicParams);
     await this.lambdaClient.send(lambdaFunction);
+    if (urlOptions) {
+      const urlParams: UpdateFunctionUrlConfigCommandInput = {
+        FunctionName: this.getFunctionName(),
+        Qualifier: urlOptions.qualifier,
+        AuthType: urlOptions.authType,
+        Cors: {
+          AllowCredentials: urlOptions.cors?.allowCredentials,
+          AllowHeaders: urlOptions.cors?.allowHeaders,
+          AllowMethods: urlOptions.cors?.allowMethods,
+          AllowOrigins: urlOptions.cors?.allowOrigins,
+          ExposeHeaders: urlOptions.cors?.exposeHeaders,
+          MaxAge: urlOptions.cors?.maxAge,
+        },
+        InvokeMode: urlOptions.invokeMode,
+      };
+      const lambdaUrlConfiguration = new UpdateFunctionUrlConfigCommand(urlParams);
+      await this.lambdaClient.send(lambdaUrlConfiguration);
+    }
   }
 }
