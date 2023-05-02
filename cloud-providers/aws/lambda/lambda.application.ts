@@ -1,24 +1,25 @@
-import { join, parse } from 'path';
-import { readFileSync } from 'fs';
-import archiver from 'archiver';
-import { createWriteStream } from 'fs';
-import { Application, AppContext, AppBuildResult, AppBuildContext, AppDeployContext } from '@teambit/application';
-import { Port } from '@teambit/toolbox.network.get-port';
-import { watch } from 'lambda-local';
-import { LambdaDeployOptions, CreateFunctionCommandOptions, CreateFunctionUrlConfigCommandOptions as FunctionUrlConfigCommandOptions, LambdaUrlOptions } from './lambda.options';
 import {
-  LambdaClient,
   AddPermissionCommand,
   CreateFunctionCommand,
+  CreateFunctionCommandInput,
   CreateFunctionUrlConfigCommand,
-  UpdateFunctionUrlConfigCommand,
-  UpdateFunctionUrlConfigCommandInput,
-  UpdateFunctionCodeCommandInput,
+  CreateFunctionUrlConfigCommandInput,
   GetFunctionCommand,
   GetFunctionCommandOutput,
+  LambdaClient,
   UpdateFunctionCodeCommand,
+  UpdateFunctionCodeCommandInput,
+  UpdateFunctionUrlConfigCommand,
+  UpdateFunctionUrlConfigCommandInput,
 } from '@aws-sdk/client-lambda';
+import { AppBuildContext, AppBuildResult, AppContext, AppDeployContext, Application } from '@teambit/application';
+import { Port } from '@teambit/toolbox.network.get-port';
+import archiver from 'archiver';
+import { createWriteStream, readFileSync } from 'fs';
+import { watch } from 'lambda-local';
+import { join, parse } from 'path';
 import { webpack } from 'webpack';
+import { LambdaDeployOptions, LambdaUrlOptions } from './lambda.options';
 
 export class LambdaApp implements Application {
   private lambdaClient: LambdaClient;
@@ -125,8 +126,15 @@ export class LambdaApp implements Application {
   }
 
   private async createNewLambda(zipFile: Buffer) {
+    const { urlOptions } = this.options;
+    await this.createNewFunction(zipFile);
+    if (urlOptions)
+      await this.createFunctionUrlConfig(urlOptions);
+  }
+
+  private async createNewFunction(zipFile: Buffer) {
     const { runtime, handlerName, role, description, urlOptions } = this.options;
-    const basicParams: CreateFunctionCommandOptions = {
+    const basicParams: CreateFunctionCommandInput = {
       Code: {
         ZipFile: zipFile,
       },
@@ -136,12 +144,10 @@ export class LambdaApp implements Application {
       Runtime: runtime,
       Description: description,
     };
-    const lambdaFunction = new CreateFunctionCommand(basicParams);
-    await this.lambdaClient.send(lambdaFunction);
-    if (urlOptions)
-      await this.createFunctionUrlConfig(urlOptions);
+    await this.lambdaClient.send(new CreateFunctionCommand(basicParams));
   }
-  private mapFunctionUrlConfig(urlOptions: LambdaUrlOptions) {
+
+  private mapFunctionUrlConfig(urlOptions: LambdaUrlOptions): CreateFunctionUrlConfigCommandInput | UpdateFunctionUrlConfigCommandInput {
     return {
       FunctionName: this.getFunctionName(),
       Qualifier: urlOptions.qualifier,
@@ -158,35 +164,40 @@ export class LambdaApp implements Application {
     };
   }
   private async createFunctionUrlConfig(urlOptions: LambdaUrlOptions) {
-    const urlParams: FunctionUrlConfigCommandOptions = this.mapFunctionUrlConfig(urlOptions);
-    const lambdaUrlConfiguration = new CreateFunctionUrlConfigCommand(urlParams);
-    await this.lambdaClient.send(lambdaUrlConfiguration);
+    const urlParams = this.mapFunctionUrlConfig(urlOptions);
+    await this.lambdaClient.send(new CreateFunctionUrlConfigCommand(urlParams as CreateFunctionUrlConfigCommandInput));
     if (urlOptions.authType === 'NONE') {
-      const permissionParams = {
-        FunctionName: this.getFunctionName(),
-        StatementId: "FunctionURLAllowPublicAccess",
-        Action: "lambda:InvokeFunctionUrl",
-        Principal: "*",
-        FunctionUrlAuthType: "NONE"
-      };
-      await this.lambdaClient.send(new AddPermissionCommand(permissionParams));
+      await this.addPublicAccessPermission();
     }
   }
 
-  private async updateExistingLambda(zipFile: Buffer, urlOptions?: LambdaUrlOptions) {
-    const basicParams: UpdateFunctionCodeCommandInput = {
-      ZipFile: zipFile,
+  private async addPublicAccessPermission() {
+    const permissionParams = {
       FunctionName: this.getFunctionName(),
+      StatementId: "FunctionURLAllowPublicAccess",
+      Action: "lambda:InvokeFunctionUrl",
+      Principal: "*",
+      FunctionUrlAuthType: "NONE"
     };
-    const lambdaFunction = new UpdateFunctionCodeCommand(basicParams);
-    await this.lambdaClient.send(lambdaFunction);
+    await this.lambdaClient.send(new AddPermissionCommand(permissionParams));
+  }
+
+  private async updateExistingLambda(zipFile: Buffer, urlOptions?: LambdaUrlOptions) {
+    await this.updateExistingFunction(zipFile);
     if (urlOptions)
       await this.updateFunctionUrlConfig(urlOptions);
   }
 
+  private async updateExistingFunction(zipFile: Buffer) {
+    const basicParams: UpdateFunctionCodeCommandInput = {
+      ZipFile: zipFile,
+      FunctionName: this.getFunctionName(),
+    };
+    await this.lambdaClient.send(new UpdateFunctionCodeCommand(basicParams));
+  }
+
   private async updateFunctionUrlConfig(urlOptions: LambdaUrlOptions) {
-    const urlParams: UpdateFunctionUrlConfigCommandInput = this.mapFunctionUrlConfig(urlOptions);
-    const lambdaUrlConfiguration = new UpdateFunctionUrlConfigCommand(urlParams);
-    await this.lambdaClient.send(lambdaUrlConfiguration);
+    const urlParams = this.mapFunctionUrlConfig(urlOptions);
+    await this.lambdaClient.send(new UpdateFunctionUrlConfigCommand(urlParams as UpdateFunctionUrlConfigCommandInput));
   }
 }
