@@ -5,38 +5,18 @@ labels: ['serverless', 'aws', 'lambda', 'demo', 'deployer', 'app']
 
 A basic component that publishes a function to AWS Lambda.
 
-## Basic usage
-
-To get this Lambda function running in your workspace, run the following:
-
-```sh
-bit fork aws-demos.lambda/aws/lambda/simple-lambda
-```
-
-Configure the new Lambda component on your [workspace.json](https://bit.dev/teambit/workspace/content/workspace-configuration/~compositions) by adding your component to the root level:
-
-```json
-"myorg.some-scope/aws/lambda/simple-lambda": {}
-```
-
-Also add the dependency in the same file:
-
-```json
-"teambit.cloud-providers/aws/lambda": {}
-```
-
 ## Running locally
 
-Run the Lambda using the app name set on `hello.world.lambda.ts`:
+Run the Lambda using the app name set on `simple-lambda.lambda.ts`:
 
 ```
-bit run hello-lambda-app
+bit run simple-lambda
 ```
 
 You should see a message in the console like the following:
 
 ```sh
-hello-lambda-app app is running on http://localhost:3000
+simple-lambda app is running on http://localhost:3000
 ```
 
 To test your lambda function, you can make a POST request to the URL where it is running.
@@ -60,7 +40,7 @@ Response
   "data": {
     "statusCode": 200,
     "headers": { "Content-Type": "application/json" },
-    "body": "{\"greetings\":\"Hello Bit Component!. It is the year 2022\"}"
+    "body": "{\"greetings\":\"Hello Bit Component!. It is the year 2023\"}"
   }
 }
 ```
@@ -85,7 +65,7 @@ Make sure to configure `deployOptions` within your Lambda as shown below. It is 
 Once done, your component would be deployed on your next tag:
 
 ```
-bit tag aws/lambda/simple-lambda
+bit tag -m "Deploy Lambda"
 ```
 
 Visit your AWS console and you will see the Lambda function deployed.

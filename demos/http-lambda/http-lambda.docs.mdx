@@ -3,34 +3,14 @@ description: A very basic AWS Lambda
 labels: ['serverless', 'aws', 'lambda', 'demo', 'deployer', 'app']
 ---
 
-A basic component that publishes a function to AWS Lambda.
-
-## Basic usage
-
-To get this Lambda function running in your workspace, run the following:
-
-```sh
-bit fork aws-demos.lambda/aws/lambda/http-lambda
-```
-
-Configure the new Lambda component on your [workspace.json](https://bit.dev/teambit/workspace/content/workspace-configuration/~compositions) by adding your component to the root level:
-
-```json
-"myorg.some-scope/aws/lambda/http-lambda": {}
-```
-
-Also add the dependency in the same file:
-
-```json
-"teambit.cloud-providers/aws/lambda": {}
-```
+A basic AWS Lambda function component
 
 ## Running locally
 
-Run the Lambda using the app name set on `hello.world.lambda.ts`:
+Run the Lambda using the app name set on `http-lambda.lambda.ts`:
 
 ```
-bit run hello-lambda-app
+bit run hello-lambda
 ```
 
 You should see a message in the console like the following:
@@ -43,12 +23,16 @@ To test your lambda function, you can make a POST request to the URL where it is
 To test an event, pass it to the body of the request:
 
 ```sh
-curl --location --request POST 'http://localhost:3000' \
+curl --location --request GET 'http://localhost:3000' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "event":{
-        "firstName": "Bit",
-        "lastName": "Component"
+      requestContext: {
+        http: {
+          method: 'GET',
+          path: 'api/hello'
+        }
+      }
     }
 }'
 ```
@@ -60,7 +44,7 @@ Response
   "data": {
     "statusCode": 200,
     "headers": { "Content-Type": "application/json" },
-    "body": "{\"greetings\":\"Hello Bit Component!. It is the year 2022\"}"
+    "body": "{\"method\":\"GET\", \"path\":\"api/hello\"}"
   }
 }
 ```
@@ -85,7 +69,7 @@ Make sure to configure `deployOptions` within your Lambda as shown below. It is 
 Once done, your component would be deployed on your next tag:
 
 ```
-bit tag aws/lambda/http-lambda
+bit tag -m "Deploy Lambda"
 ```
 
 Visit your AWS console and you will see the Lambda function deployed.
