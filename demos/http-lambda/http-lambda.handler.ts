@@ -1,11 +1,21 @@
-import moment from "moment";
+import { APIGatewayProxyEventV2, APIGatewayProxyEventV2WithRequestContext } from "aws-lambda";
 
+/* Using APIGatewayProxyEventV2 @Type for function URL params */
 export async function handler(
-  event, context?
+  event: APIGatewayProxyEventV2, context?: APIGatewayProxyEventV2WithRequestContext<APIGatewayProxyEventV2>
 ) {
+  const method = event.requestContext.http.method;
+  const path = event.requestContext.http.path;
+  const queryParams = event.queryStringParameters;
+
+  console.log(`Received http ${method} for the path ${path} and query params ${queryParams}`);
+
   const data = {
-    greeting: `Hello HTTP!. It is the year ${moment().format("YYYY")}`,
+    method: method,
+    path: path,
+    queryParams: queryParams
   };
+
   return {
     statusCode: 200,
     headers: { "Content-Type": "application/json" },

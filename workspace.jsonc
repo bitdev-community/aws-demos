@@ -29,8 +29,6 @@
      **/
     "defaultScope": "aws-demos.lambda"
   },
-  "teambit.cloud-providers/aws/lambda": {},
-  "aws-demos.lambda/http-lambda": {},
   /**
    * main configuration for component dependency resolution.
    **/
@@ -55,6 +53,9 @@
     },
     "linkCoreAspects": true
   },
+  "teambit.component/issues": {
+    "ignoreIssues": ["MissingPackagesDependenciesOnFs"]
+  },
   /**
    * workspace variants allow to set different subsets of configuration for components in your
    * workspace. this is extremely useful for upgrading, aligning and building components with a new
@@ -73,5 +74,7 @@
       // "teambit.react/react": { }
     }
   },
+  "teambit.cloud-providers/aws/lambda": {},
+  "aws-demos.lambda/http-lambda": {},
   "aws-demos.lambda/simple-lambda": {}
 }
