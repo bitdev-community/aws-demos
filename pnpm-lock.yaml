@@ -68,7 +68,7 @@ importers:
 
   cloud-providers/aws/lambda: {}
 
-  lambda/simple-lambda: {}
+  demos/http-lambda: {}
 
 packages:
 

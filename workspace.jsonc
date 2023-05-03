@@ -30,6 +30,7 @@
     "defaultScope": "aws-demos.lambda"
   },
   "teambit.cloud-providers/aws/lambda": {},
+  "aws-demos.lambda/http-lambda": {},
   /**
    * main configuration for component dependency resolution.
    **/
