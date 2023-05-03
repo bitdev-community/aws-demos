@@ -2,9 +2,9 @@ import { LambdaApp } from "@teambit/cloud-providers.aws.lambda";
 
 export const HelloLambdaApp: LambdaApp = {
   /* the app's name (for Bit) */
-  name: "hello-lambda-app",
+  name: "simple-lambda",
   /* an entry point for the app's build */
-  entry: require.resolve("./hello-world-root"),
+  entry: require.resolve("./simple-lambda.handler"),
   /* your aws host config and credentials */
   deployOptions: {
     clientConfig: {

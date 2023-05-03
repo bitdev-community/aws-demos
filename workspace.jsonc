@@ -43,6 +43,7 @@
         "@aws-sdk/client-iam": "^3.321.1",
         "@aws-sdk/client-lambda": "3.322.0",
         "@babel/runtime": "7.21.0",
+        "@types/aws-lambda": "^8.10.115",
         "@types/testing-library__jest-dom": "5.14.5",
         "archiver": "5.3.1",
         "core-js": "^3.30.1",

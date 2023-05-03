@@ -10,13 +10,13 @@ The Lambda aspect provides a component-driven experience for composing, building
 To get a Lambda function running in your workspace, fork this Lambda component example:
 
 ```sh
-bit fork learnbit.apps/aws/lambda/hello-world-lambda
+bit fork learnbit.apps/aws/lambda/simple-lambda-lambda
 ```
 
 Configure the new Lambda component on your [workspace.json](https://bit.dev/teambit/workspace/content/workspace-configuration/~compositions) by adding your component to the root level:
 
 ```json
-"myorg.some-scope/aws/lambda/hello-world-lambda": {}
+"myorg.some-scope/aws/lambda/simple-lambda-lambda": {}
 ```
 
 Also add the dependency in the same file:
@@ -67,7 +67,7 @@ Response
 
 ## Deploy the lambda function to AWS
 
-AWS Lambda is set in an [app plugin](https://bit.dev/apps/app-plugin)file ending with the `lambda.*` suffix as [seen in this example](https://bit.dev/learnbit/apps/aws/lambda/hello-world/~code/hello-world.lambda.ts).
+AWS Lambda is set in an [app plugin](https://bit.dev/apps/app-plugin)file ending with the `lambda.*` suffix as [seen in this example](https://bit.dev/learnbit/apps/aws/lambda/simple-lambda/~code/simple-lambda.lambda.ts).
 Make sure to configure `deployOptions` within your Lambda as following:
 It is recommended to store your credentials in environment variables.
 
@@ -87,7 +87,7 @@ It is recommended to store your credentials in environment variables.
 Once done, your component would be deployed on your next tag:
 
 ```
-bit tag aws/lambda/hello-world
+bit tag aws/lambda/simple-lambda
 ```
 
 Visit your AWS console and you will see the Lambda function deployed.

@@ -1,4 +1,4 @@
-import { handler } from "./hello-world-root";
+import { handler } from "./simple-lambda.handler";
 
 it("Should retrieve a 200 response with a greeting", async () => {
   expect.hasAssertions();

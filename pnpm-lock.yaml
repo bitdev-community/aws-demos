@@ -22,6 +22,9 @@ importers:
       '@teambit/toolbox.network.get-port':
         specifier: 0.0.112
         version: registry.npmjs.org/@teambit/toolbox.network.get-port@0.0.112
+      '@types/aws-lambda':
+        specifier: ^8.10.115
+        version: registry.npmjs.org/@types/aws-lambda@8.10.115
       archiver:
         specifier: 5.3.1
         version: registry.npmjs.org/archiver@5.3.1
@@ -1150,6 +1153,12 @@ packages:
     dependencies:
       '@types/glob': registry.npmjs.org/@types/glob@8.1.0
     dev: true
+
+  registry.npmjs.org/@types/aws-lambda@8.10.115:
+    resolution: {integrity: sha512-kCZuFXKLV3y8NjSoaD5+qKTpRWvPz3uh3W/u1uwlw3Mg+MtaStg1NWgjAwUXo/VJDb6n6KF1ljykFNlNwEJ53Q==, registry: https://node.bit.cloud/, tarball: https://registry.npmjs.org/@types/aws-lambda/-/aws-lambda-8.10.115.tgz}
+    name: '@types/aws-lambda'
+    version: 8.10.115
+    dev: false
 
   registry.npmjs.org/@types/eslint-scope@3.7.4:
     resolution: {integrity: sha512-9K4zoImiZc3HlIp6AVUDE4CWYx22a+lhSZMYNpbjW04+YF0KWj4pJXnEMjdnFTiQibFFmElcsasJXDbdI/EPhA==, registry: https://node.bit.cloud/, tarball: https://registry.npmjs.org/@types/eslint-scope/-/eslint-scope-3.7.4.tgz}
