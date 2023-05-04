@@ -1,4 +1,4 @@
-import { LambdaApp } from "@teambit/cloud-providers.aws.lambda";
+import { LambdaApp } from "@aws-lambda/provider.provider";
 
 export const HttpLambdaApp: LambdaApp = {
   /* the app's name (for Bit) */

@@ -10,7 +10,7 @@
     /**
      * the name of the component workspace. used for development purposes.
      **/
-    "name": "aws-demos",
+    "name": "aws-lambda",
     /**
      * set the icon to be shown on the Bit server.
      **/
@@ -27,7 +27,7 @@
     /**
      * default scope for all components in workspace.
      **/
-    "defaultScope": "aws-demos.lambda"
+    "defaultScope": "aws-lambda.demos"
   },
   /**
    * main configuration for component dependency resolution.
@@ -42,19 +42,23 @@
         "@aws-sdk/client-iam": "^3.321.1",
         "@aws-sdk/client-lambda": "3.322.0",
         "@babel/runtime": "7.21.0",
+        "@teambit/toolbox.network.get-port": "^0.0.121",
         "@types/aws-lambda": "^8.10.115",
         "@types/testing-library__jest-dom": "5.14.5",
         "archiver": "5.3.1",
         "core-js": "^3.30.1",
         "lambda-local": "2.0.3",
-        "moment": "2.29.4"
+        "moment": "2.29.4",
+        "webpack": "^5.82.0"
       },
       "peerDependencies": {}
     },
     "linkCoreAspects": true
   },
   "teambit.component/issues": {
-    "ignoreIssues": ["MissingPackagesDependenciesOnFs"]
+    "ignoreIssues": [
+      "MissingPackagesDependenciesOnFs"
+    ]
   },
   /**
    * workspace variants allow to set different subsets of configuration for components in your
@@ -74,7 +78,7 @@
       // "teambit.react/react": { }
     }
   },
-  "teambit.cloud-providers/aws/lambda": {},
-  "aws-demos.lambda/http-lambda": {},
-  "aws-demos.lambda/simple-lambda": {}
+  "aws-lambda.demos/http-lambda": {},
+  "aws-lambda.demos/simple-lambda": {},
+  "aws-lambda.provider/provider": {}
 }

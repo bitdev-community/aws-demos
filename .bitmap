@@ -9,21 +9,21 @@
  */
 
 {
-    "aws/lambda": {
-        "scope": "teambit.cloud-providers",
-        "version": "0.0.19",
-        "mainFile": "index.ts",
-        "rootDir": "cloud-providers/aws/lambda"
-    },
     "http-lambda": {
-        "scope": "",
-        "version": "0.0.17",
+        "scope": "aws-lambda.demos",
+        "version": "0.0.1",
         "mainFile": "index.ts",
         "rootDir": "demos/http-lambda"
     },
+    "provider": {
+        "scope": "aws-lambda.provider",
+        "version": "0.0.1",
+        "mainFile": "index.ts",
+        "rootDir": "provider"
+    },
     "simple-lambda": {
-        "scope": "",
-        "version": "0.0.3",
+        "scope": "aws-lambda.demos",
+        "version": "0.0.1",
         "mainFile": "index.ts",
         "rootDir": "demos/simple-lambda"
     },
