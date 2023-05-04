@@ -1,6 +1,8 @@
-# AWS Lambda with Bit Demo
+# AWS Lambda with Bit Demos
 
-This repository includes demo applications, using AWS Lambda with Bit Components
+This repository includes demo applications, using AWS Lambda with Bit Components.
+
+**Bit Scopes**: https://bit.cloud/aws-lambda
 
 ## Getting Started
 
