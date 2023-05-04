@@ -1,7 +1,7 @@
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 import { handler } from "./http-lambda.handler";
 
-it("Should retrieve a 200 response with a greeting", async () => {
+it("Should retrieve a 200 response with method name and path used in the request", async () => {
   expect.hasAssertions();
   const data = {
     method: 'GET',

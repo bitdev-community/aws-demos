@@ -16,8 +16,7 @@
           ],
           "console": "integratedTerminal",
           "sourceMaps": true,
-          "internalConsoleOptions": "neverOpen",
-          "cwd": "/Users/ranmizrahi/Bit/ranm8/website"
+          "internalConsoleOptions": "neverOpen"
         }
       ]
 }
