@@ -79,7 +79,6 @@
       // "teambit.react/react": { }
     }
   },
-
   "aws-lambda.app-types/lambda": {},
   "aws-lambda.demos/simple-lambda": {},
   "aws-lambda.demos/http-lambda": {}

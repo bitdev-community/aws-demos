@@ -10,13 +10,13 @@ A basic AWS Lambda function component
 Run the Lambda using the app name set on `http-lambda.lambda.ts`:
 
 ```
-bit run hello-lambda
+bit run http-lambda
 ```
 
 You should see a message in the console like the following:
 
 ```sh
-hello-lambda-app app is running on http://localhost:3000
+http-app app is running on http://localhost:3000
 ```
 
 To test your lambda function, you can make a POST request to the URL where it is running.
@@ -62,6 +62,15 @@ Make sure to configure `deployOptions` within your Lambda as shown below. It is 
       credentials: {
         secretAccessKey: process.env.AWS_SECRET_KEY,
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      },
+       /* lambda endpoint url configurations.  */
+      urlOptions: {
+        authType: 'NONE',
+        invokeMode: 'BUFFERED',
+        cors: {
+          allowOrigins: ['*'],
+          allowMethods: ['GET']
+        }
       },
     },
 ```
