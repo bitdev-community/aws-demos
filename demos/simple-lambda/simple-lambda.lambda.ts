@@ -1,4 +1,4 @@
-import { LambdaApp } from "@aws-lambda/provider.provider";
+import { LambdaApp } from "@aws-lambda/app-types.lambda";
 
 export const HttpLambdaApp: LambdaApp = {
   /* the app's name (for Bit) */

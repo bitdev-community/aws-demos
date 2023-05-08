@@ -11,19 +11,19 @@
 {
     "http-lambda": {
         "scope": "aws-lambda.demos",
-        "version": "0.0.2",
+        "version": "0.0.3",
         "mainFile": "index.ts",
         "rootDir": "demos/http-lambda"
     },
-    "provider": {
-        "scope": "aws-lambda.provider",
-        "version": "0.0.2",
+    "lambda": {
+        "scope": "aws-lambda.app-types",
+        "version": "0.0.1",
         "mainFile": "index.ts",
-        "rootDir": "provider"
+        "rootDir": "app-types/lambda"
     },
     "simple-lambda": {
         "scope": "aws-lambda.demos",
-        "version": "0.0.2",
+        "version": "0.0.5",
         "mainFile": "index.ts",
         "rootDir": "demos/simple-lambda"
     },

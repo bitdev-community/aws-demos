@@ -14,7 +14,7 @@ importers:
         specifier: 3.322.0
         version: registry.npmjs.org/@aws-sdk/client-lambda@3.322.0
       '@teambit/harmony':
-        specifier: 0.4.6
+        specifier: ^0.4.6
         version: registry.npmjs.org/@teambit/harmony@0.4.6
       '@teambit/toolbox.network.get-port':
         specifier: ^0.0.121
@@ -51,11 +51,11 @@ importers:
         specifier: 12.20.4
         version: registry.npmjs.org/@types/node@12.20.4
 
-  lambda/app: {}
+  demos/http-lambda: {}
 
-  lambda/demos/http-lambda: {}
+  demos/simple-lambda: {}
 
-  lambda/demos/simple-lambda: {}
+  provider: {}
 
 packages:
 
