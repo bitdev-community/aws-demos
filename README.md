@@ -1,5 +1,4 @@
 [![Bit Org AWS Lambda](https://img.shields.io/badge/Bit-@aws--lambda-2C00C3)](https://bit.cloud/aws-lambda)
-
 [![Scope Demos](https://img.shields.io/badge/Scope-Demos_(2)-820596)](https://bit.cloud/aws-lambda/demos)
 [![Scope App Types](https://img.shields.io/badge/Scope-App_Types_(1)-820596)](https://bit.cloud/aws-lambda/app-types)
 
